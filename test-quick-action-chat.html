@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Action Chat Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">🚀 Quick Action Chat System Test</h1>
+            <p class="text-gray-600 mb-6">Test the AI-powered quick action chat with returns, tracking, and queries</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-900 mb-2">✅ Features Implemented</h3>
+                    <ul class="text-sm text-blue-800 space-y-1">
+                        <li>• Quick Action Shortcuts (Return, Track, Query, Payment)</li>
+                        <li>• Conversational Return Flow</li>
+                        <li>• Recent Orders Display</li>
+                        <li>• Product Selection</li>
+                        <li>• Return Reason Input</li>
+                        <li>• Email Notifications</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-green-900 mb-2">🔧 How to Test</h3>
+                    <ol class="text-sm text-green-800 space-y-1">
+                        <li>1. Login as a customer</li>
+                        <li>2. Click the chat button (bottom right)</li>
+                        <li>3. Select "Quick Actions ⚡"</li>
+                        <li>4. Try "Return Product" flow</li>
+                        <li>5. Select an order and product</li>
+                        <li>6. Enter return reason</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- API Test Panel -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">🔌 API Endpoints Test</h2>
+                
+                <div class="space-y-4">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-semibold text-gray-700">Get Orders</h3>
+                            <button onclick="testGetOrders()" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600">
+                                Test
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500">GET /api/orders</p>
+                        <div id="orders-result" class="mt-2 text-xs bg-gray-50 p-2 rounded"></div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-semibold text-gray-700">Request Return</h3>
+                            <button onclick="testReturnRequest()" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600">
+                                Test
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500">PUT /api/orders/:id/return</p>
+                        <input 
+                            type="text" 
+                            id="order-id" 
+                            placeholder="Order ID" 
+                            class="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        >
+                        <input 
+                            type="text" 
+                            id="return-reason" 
+                            placeholder="Return reason" 
+                            class="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            value="Wrong size - too small"
+                        >
+                        <div id="return-result" class="mt-2 text-xs bg-gray-50 p-2 rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Orders -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">📦 Sample Orders (For Testing)</h2>
+                
+                <div class="space-y-3">
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-400 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-semibold text-gray-800">Order #ORD-123456</h3>
+                            <span class="status-badge status-delivered">Delivered</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Nike Air Max 90 - Size 10 - $129.99</p>
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>Delivered: 5 days ago</span>
+                            <span class="text-green-600 font-semibold">✓ Eligible for return</span>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-400 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-semibold text-gray-800">Order #ORD-123457</h3>
+                            <span class="status-badge status-delivered">Delivered</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Adidas Ultraboost - Size 9.5 - $149.99</p>
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>Delivered: 12 days ago</span>
+                            <span class="text-green-600 font-semibold">✓ Eligible for return</span>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-yellow-400 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-semibold text-gray-800">Order #ORD-123458</h3>
+                            <span class="status-badge status-pending">Shipping</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Calvin Klein Jeans - Size M - $79.99</p>
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>Ordered: 2 days ago</span>
+                            <span class="text-orange-600 font-semibold">⏳ Not yet delivered</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Test Results</h2>
+            <div id="test-results" class="space-y-2">
+                <p class="text-gray-500 text-sm">No tests run yet. Click the test buttons above to begin.</p>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-lg p-6 mt-6 border-2 border-purple-200">
+            <h2 class="text-xl font-bold text-purple-900 mb-4">📋 Testing Instructions</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-purple-800 mb-2">Manual UI Test:</h3>
+                    <ol class="text-sm text-purple-700 space-y-2">
+                        <li>1. <strong>Start Backend:</strong> <code class="bg-purple-100 px-2 py-1 rounded">cd server && node server.js</code></li>
+                        <li>2. <strong>Start Frontend:</strong> <code class="bg-purple-100 px-2 py-1 rounded">npm run dev</code></li>
+                        <li>3. <strong>Login:</strong> Use test customer account</li>
+                        <li>4. <strong>Open Chat:</strong> Click floating chat button</li>
+                        <li>5. <strong>Click:</strong> "Quick Actions ⚡" button</li>
+                        <li>6. <strong>Test Return:</strong> Follow the conversational flow</li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-purple-800 mb-2">Quick Action Features:</h3>
+                    <ul class="text-sm text-purple-700 space-y-2">
+                        <li>🔄 <strong>Return Product:</strong> View orders → Select product → Enter reason</li>
+                        <li>📍 <strong>Track Order:</strong> See all active shipments with status</li>
+                        <li>❓ <strong>Raise Query:</strong> Get help by category (Product, Shipping, Payment)</li>
+                        <li>💳 <strong>Payment Issue:</strong> Report payment problems</li>
+                        <li>💬 <strong>AI Responses:</strong> Smart contextual replies</li>
+                        <li>📧 <strong>Email Notifications:</strong> Auto-sent on return request</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let authToken = '';
+
+        // Helper function to add test result
+        function addTestResult(test, result, success) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultEl = document.createElement('div');
+            resultEl.className = `p-3 rounded-lg ${success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+            resultEl.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <p class="font-semibold ${success ? 'text-green-800' : 'text-red-800'}">${success ? '✅' : '❌'} ${test}</p>
+                        <pre class="text-xs mt-1 ${success ? 'text-green-700' : 'text-red-700'} overflow-x-auto">${JSON.stringify(result, null, 2)}</pre>
+                    </div>
+                    <span class="text-xs ${success ? 'text-green-600' : 'text-red-600'}">${new Date().toLocaleTimeString()}</span>
+                </div>
+            `;
+            
+            if (resultsDiv.querySelector('p.text-gray-500')) {
+                resultsDiv.innerHTML = '';
+            }
+            resultsDiv.insertBefore(resultEl, resultsDiv.firstChild);
+        }
+
+        async function testGetOrders() {
+            try {
+                const token = localStorage.getItem('token') || prompt('Enter your auth token:');
+                if (!token) {
+                    alert('Please login first to get auth token');
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE}/api/orders`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                document.getElementById('orders-result').textContent = 
+                    `Found ${data.data?.orders?.length || 0} orders`;
+                
+                addTestResult('Get Orders', data, response.ok);
+                
+                // Auto-populate first order ID
+                if (data.data?.orders?.length > 0) {
+                    const firstDeliveredOrder = data.data.orders.find(o => o.status === 'delivered');
+                    if (firstDeliveredOrder) {
+                        document.getElementById('order-id').value = firstDeliveredOrder._id;
+                    }
+                }
+            } catch (error) {
+                document.getElementById('orders-result').textContent = `Error: ${error.message}`;
+                addTestResult('Get Orders', { error: error.message }, false);
+            }
+        }
+
+        async function testReturnRequest() {
+            try {
+                const token = localStorage.getItem('token') || prompt('Enter your auth token:');
+                if (!token) {
+                    alert('Please login first to get auth token');
+                    return;
+                }
+
+                const orderId = document.getElementById('order-id').value;
+                const reason = document.getElementById('return-reason').value;
+
+                if (!orderId) {
+                    alert('Please enter an order ID (or run Get Orders test first)');
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE}/api/orders/${orderId}/return`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+                
+                document.getElementById('return-result').textContent = 
+                    response.ok ? '✅ Return requested successfully' : `❌ ${data.message}`;
+                
+                addTestResult('Request Return', data, response.ok);
+            } catch (error) {
+                document.getElementById('return-result').textContent = `Error: ${error.message}`;
+                addTestResult('Request Return', { error: error.message }, false);
+            }
+        }
+
+        // Auto-load token from localStorage if available
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                authToken = token;
+                addTestResult('System Status', { 
+                    message: 'Auth token found in localStorage',
+                    backend: API_BASE,
+                    ready: true
+                }, true);
+            }
+        });
+    </script>
+</body>
+</html>

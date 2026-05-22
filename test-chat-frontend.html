@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Chat Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        #chat-container {
+            border: 1px solid #ccc;
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            text-align: right;
+        }
+        .bot-message {
+            background: #e9ecef;
+            color: #333;
+        }
+        #input-container {
+            display: flex;
+            gap: 10px;
+        }
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .test-keywords {
+            margin: 20px 0;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 4px;
+        }
+        .keyword-btn {
+            margin: 5px;
+            padding: 5px 10px;
+            background: #6c757d;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quick Chat Test</h1>
+    
+    <div class="test-keywords">
+        <strong>Test Keywords:</strong><br>
+        <button class="keyword-btn" onclick="sendTestMessage('hello')">hello</button>
+        <button class="keyword-btn" onclick="sendTestMessage('red shirt')">red shirt</button>
+        <button class="keyword-btn" onclick="sendTestMessage('shipping')">shipping</button>
+        <button class="keyword-btn" onclick="sendTestMessage('refund')">refund</button>
+        <button class="keyword-btn" onclick="sendTestMessage('blue jeans')">blue jeans</button>
+        <button class="keyword-btn" onclick="sendTestMessage('payment')">payment</button>
+    </div>
+
+    <div id="chat-container"></div>
+    
+    <div id="input-container">
+        <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('message-input');
+        const chatId = 'test-' + Date.now();
+
+        function addMessage(text, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
+            messageDiv.textContent = text;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            messageInput.value = '';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/chat/bot-response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userMessage: message,
+                        chatId: chatId
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Response:', data);
+
+                if (data.success && data.data) {
+                    addMessage(data.data.message, false);
+                } else if (data.message) {
+                    addMessage(data.message, false);
+                } else {
+                    addMessage('Error: No response from server', false);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('Error: ' + error.message, false);
+            }
+        }
+
+        function sendTestMessage(text) {
+            messageInput.value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
